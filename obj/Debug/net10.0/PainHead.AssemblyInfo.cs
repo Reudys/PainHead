@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PainHead")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8b4859b837cc2df6d291c1fb73b074dd5d691d8")]
 [assembly: System.Reflection.AssemblyProductAttribute("PainHead")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PainHead")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
