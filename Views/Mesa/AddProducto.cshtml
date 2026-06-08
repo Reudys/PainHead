@@ -1,0 +1,38 @@
+@model PainHead.Models.Mesa   // Solo para tener el contexto de la mesa
+
+@{
+    ViewData["Title"] = "Agregar Producto a Mesa";
+    var productos = ViewBag.Productos as List<PainHead.Models.Producto>;
+    int mesaId = ViewBag.MesaId;
+}
+
+<h2>Agregar Producto a Mesa @ViewBag.MesaNumero</h2>
+
+<form asp-action="AddProducto" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="mesaId" value="@mesaId" />
+
+    <div class="mb-3">
+        <label class="form-label">Producto</label>
+        <select name="productoId" class="form-select" required>
+            <option value="">-- Selecciona un producto --</option>
+            @if (productos != null)
+            {
+                foreach (var p in productos)
+                {
+                    <option value="@p.Id">@p.Nombre - @p.Precio.ToString("C")</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Cantidad</label>
+        <input type="number" name="cantidad" value="1" min="1" class="form-control" required />
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Agregar a la Mesa</button>
+        <a asp-action="Details" asp-route-id="@mesaId" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>

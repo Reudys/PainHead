@@ -1,0 +1,44 @@
+@model PainHead.Models.Mesa
+
+@{
+    ViewData["Title"] = $"Cerrar Mesa #{@Model.NumeroMesa}";
+}
+
+<h2 class="text-danger">Cerrar Mesa @Model.NumeroMesa</h2>
+
+<div class="alert alert-warning">
+    <h4>⚠️ Atención</h4>
+    <p><strong>¿Estás seguro que quieres cerrar esta mesa?</strong></p>
+    <p>No olvides cobrar al cliente.</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h4>Total a Cobrar</h4>
+        <h2 class="text-success">@Model.TotalPagar?.ToString("C")</h2>
+        
+        <hr />
+        
+        <h5>Resumen de productos:</h5>
+        <ul>
+            @foreach (var item in Model.PListas)
+            {
+                <li>@item.Cantidad × @item.Producto?.Nombre - @((item.PrecioUnitario * item.Cantidad).ToString("C"))</li>
+            }
+        </ul>
+    </div>
+</div>
+
+<form asp-action="Close" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+    
+    <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-danger btn-lg">
+            Sí, Cerrar Mesa
+        </button>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary btn-lg">
+            Cancelar
+        </a>
+    </div>
+</form>

@@ -16,4 +16,6 @@ public class Producto
 
     [Required(ErrorMessage = "El Producto debe tener un Precio")]
     public double Precio { get; set; }
+
+    public ICollection<PLista> PListas { get; set; } = new List<PLista>();
 }

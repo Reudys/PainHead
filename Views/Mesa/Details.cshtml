@@ -1,0 +1,52 @@
+@model PainHead.Models.Mesa
+
+@{
+    ViewData["Title"] = $"Mesa #{@Model.NumeroMesa}";
+}
+
+<h2>Mesa @Model.NumeroMesa - @Model.Nombre</h2>
+
+<div class="mb-3">
+    <a asp-action="AddProducto" asp-route-id="@Model.Id" class="btn btn-success">+ Agregar Producto</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver a Mesas</a>
+    <a asp-action="ConfirmClose" asp-route-id="@Model.Id" class="btn btn-danger">Cerrar Mesa</a>
+</div>
+
+<hr />
+
+<h4>Productos en esta mesa</h4>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Descripción</th>
+            <th>Precio Unit.</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.PListas)
+        {
+            <tr>
+                <td>@item.Producto?.Nombre</td>
+                <td>@item.Producto?.Descripcion</td>
+                <td>@item.PrecioUnitario.ToString("C")</td>
+                <td>@item.Cantidad</td>
+                <td>@((item.PrecioUnitario * item.Cantidad).ToString("C"))</td>
+                <td>
+                    <form asp-action="RemoveProducto" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm" 
+                                onclick="return confirm('¿Eliminar este producto?')">
+                            Eliminar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

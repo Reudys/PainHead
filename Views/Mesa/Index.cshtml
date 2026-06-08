@@ -1,0 +1,40 @@
+@model List<PainHead.Models.Mesa>
+
+@{
+    ViewData["Title"] = "Lista de Mesas";
+}
+
+<h2>Mesas</h2>
+
+<div>
+    <a asp-action="Create" class="btn btn-primary">Nueva Mesa</a>
+</div>
+
+<br />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>N° Mesa</th>
+            <th>Nombre</th>
+            <th>Total a Pagar</th>
+            <th>Productos</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var mesa in Model)
+        {
+            <tr>
+                <td>@mesa.NumeroMesa</td>
+                <td>@mesa.Nombre</td>
+                <td>@(mesa.TotalPagar?.ToString("C") ?? "$0.00")</td>
+                <td>@mesa.PListas.Count</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@mesa.Id" class="btn btn-info btn-sm">Ver</a>
+                    <a asp-action="AddProducto" asp-route-id="@mesa.Id" class="btn btn-success btn-sm">Agregar Producto</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
