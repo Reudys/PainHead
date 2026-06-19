@@ -14,18 +14,30 @@ public class MesaController : Controller
         _context = context;
     }
 
+    public async Task<IActionResult> Start()
+    {
+        var jornadaActiva = await _context.Jornadas
+            .FirstOrDefaultAsync(j => j.Activa);
+
+        return View(jornadaActiva);
+    }
+
     // GET: Mesa
     public async Task<IActionResult> Index()
     {
+        var jornadaActiva = await _context.Jornadas
+            .FirstOrDefaultAsync(j => j.Activa);
+
+        if (jornadaActiva == null)
+            return RedirectToAction(nameof(Start));
+
         var mesas = await _context.Mesas
             .Include(m => m.PListas)
-                .ThenInclude(pl => pl.Producto)
+            .ThenInclude(pl => pl.Producto)
             .ToListAsync();
 
         return View(mesas);
     }
-
-    
 
     // GET: Mesa/Details/5
     public async Task<IActionResult> Details(int? id)
@@ -148,23 +160,48 @@ public class MesaController : Controller
     // POST: Mesa/Close/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    // POST: Mesa/Close/5
     public async Task<IActionResult> Close(int id)
     {
         var mesa = await _context.Mesas
             .Include(m => m.PListas)
             .FirstOrDefaultAsync(m => m.Id == id);
 
-        if (mesa == null) return NotFound();
+        if (mesa == null)
+            return NotFound();
 
-        // Eliminar todos los productos de la mesa
+        // Buscar la jornada activa
+        var jornada = await _context.Jornadas
+            .FirstOrDefaultAsync(j => j.Activa);
+
+        if (jornada == null)
+        {
+            TempData["Error"] = "No existe una jornada activa.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Registrar la venta antes de eliminar la mesa
+        var venta = new Venta
+        {
+            JornadaId = jornada.Id,
+            FechaVenta = DateTime.Now,
+            NumeroMesa = mesa.NumeroMesa,
+            NombreMesa = mesa.Nombre,
+            Total = mesa.TotalPagar ?? 0
+        };
+
+        _context.Ventas.Add(venta);
+
+        // Eliminar los productos asociados a la mesa
         _context.PListas.RemoveRange(mesa.PListas);
-        
-        // Opcional: Eliminar la mesa completamente
+
+        // Eliminar la mesa
         _context.Mesas.Remove(mesa);
 
+        // Guardar todos los cambios
         await _context.SaveChangesAsync();
 
-        TempData["Success"] = $"Mesa {mesa.NumeroMesa} cerrada correctamente.";
+        TempData["Success"] = $"Mesa {mesa.NumeroMesa} cerrada correctamente. Venta registrada por RD$ {venta.Total:N2}.";
 
         return RedirectToAction(nameof(Index));
     }
@@ -181,5 +218,66 @@ public class MesaController : Controller
         mesa.TotalPagar = mesa.PListas.Sum(pl => pl.PrecioUnitario * pl.Cantidad);
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<IActionResult> AbrirJornada()
+    {
+        bool existe = await _context.Jornadas
+            .AnyAsync(j => j.Activa);
+
+        if (!existe)
+        {
+            var jornada = new Jornada();
+
+            _context.Jornadas.Add(jornada);
+
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Start));
+    }
+
+    public async Task<IActionResult> CerrarJornada()
+    {
+        var jornada = await _context.Jornadas
+            .FirstOrDefaultAsync(j => j.Activa);
+
+        if (jornada != null)
+        {
+            jornada.Activa = false;
+            jornada.FechaCierre = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Start));
+    }
+
+    public async Task<IActionResult> Jornada()
+    {
+        var jornadas = await _context.Jornadas
+            .Include(j => j.Ventas)
+            .OrderByDescending(j => j.FechaApertura)
+            .ToListAsync();
+
+        ViewBag.GananciasTotales = await _context.Ventas
+            .SumAsync(v => (double?)v.Total) ?? 0;
+
+        return View(jornadas);
+    }
+
+    public async Task<IActionResult> DetalleJornada(int id)
+    {
+        var jornada = await _context.Jornadas
+            .Include(j => j.Ventas)
+            .FirstOrDefaultAsync(j => j.Id == id);
+
+        if (jornada == null)
+            return NotFound();
+
+        ViewBag.GananciasTotales = await _context.Ventas
+            .SumAsync(v => (double?)v.Total) ?? 0;
+
+        return View(jornada);
     }
 }

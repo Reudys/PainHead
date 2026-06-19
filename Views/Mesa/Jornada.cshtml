@@ -1,0 +1,56 @@
+@model IEnumerable<Jornada>
+
+<h2>Historial de Jornadas</h2>
+
+<div class="alert alert-info">
+    <strong>Ganancias Totales del Negocio:</strong>
+    RD$ @($"{ViewBag.GananciasTotales ?? 0:N2}")
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Apertura</th>
+            <th>Cierre</th>
+            <th>Ventas</th>
+            <th>Total Vendido</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+    @foreach(var jornada in Model)
+    {
+        <tr>
+            <td>@jornada.Id</td>
+
+            <td>@jornada.FechaApertura</td>
+
+            <td>
+                @(jornada.FechaCierre?.ToString() ?? "Abierta")
+            </td>
+
+            <td>@jornada.Ventas.Count</td>
+
+            <td>
+                RD$
+                @jornada.Ventas.Sum(v => v.Total).ToString("N2")
+            </td>
+
+            <td>
+                @(jornada.Activa ? "Activa" : "Cerrada")
+            </td>
+
+            <td>
+                <a asp-action="DetalleJornada"
+                   asp-route-id="@jornada.Id"
+                   class="btn btn-primary btn-sm">
+                    Ver Detalle
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

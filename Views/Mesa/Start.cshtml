@@ -1,0 +1,28 @@
+@model Jornada?
+
+@if (Model != null)
+{
+    <h2>Jornada Activa</h2>
+
+    <p>
+        Apertura: @Model.FechaApertura
+    </p>
+
+    <a asp-action="Index" class="btn btn-success">
+        Entrar al Sistema
+    </a>
+
+    <a asp-action="CerrarJornada"
+       class="btn btn-danger">
+        Cerrar Jornada
+    </a>
+}
+else
+{
+    <h2>No existe jornada activa</h2>
+
+    <a asp-action="AbrirJornada"
+       class="btn btn-primary">
+        Abrir Jornada
+    </a>
+}

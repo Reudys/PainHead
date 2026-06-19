@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
     public DbSet<Producto> Productos { get; set; }
     public DbSet<Mesa> Mesas { get; set; }
     public DbSet<PLista> PListas { get; set; }
+    public DbSet<Jornada> Jornadas { get; set; }
+    public DbSet<Venta> Ventas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,5 +38,11 @@ public class AppDbContext : DbContext
             .WithMany(p => p.PListas)
             .HasForeignKey(pl => pl.ProductoId)
             .OnDelete(DeleteBehavior.Restrict);  // No permite borrar producto si está en una mesa
+
+        modelBuilder.Entity<Venta>()
+            .HasOne(v => v.Jornada)
+            .WithMany(j => j.Ventas)
+            .HasForeignKey(v => v.JornadaId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
