@@ -2,9 +2,14 @@
 
 @{
     ViewData["Title"] = "Lista de Mesas";
+
+    DateTime now = DateTime.Now;
+    DayOfWeek day = now.DayOfWeek;
 }
 
 <h2>Mesas</h2>
+
+<p>Día: @day</p>
 
 <div>
     <a asp-action="Create" class="btn btn-primary">Nueva Mesa</a>
@@ -38,3 +43,5 @@
         }
     </tbody>
 </table>
+
+<a href="#">Cerrar Día</a>

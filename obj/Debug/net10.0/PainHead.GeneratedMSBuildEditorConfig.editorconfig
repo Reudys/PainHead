@@ -46,8 +46,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzYVxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/reudy/source/repos/PainHead/Views/Mesa/DetalleJornada.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzYVxEZXRhbGxlSm9ybmFkYS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/reudy/source/repos/PainHead/Views/Mesa/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzYVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/reudy/source/repos/PainHead/Views/Mesa/Jornada.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzYVxKb3JuYWRhLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/reudy/source/repos/PainHead/Views/Mesa/Start.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzYVxTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/reudy/source/repos/PainHead/Views/Producto/Create.cshtml]

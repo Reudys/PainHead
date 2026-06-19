@@ -1,0 +1,41 @@
+@model Jornada
+
+<h2>Detalle de Jornada #@Model.Id</h2>
+
+<div class="mb-3">
+    <strong>Apertura:</strong>
+    @Model.FechaApertura
+</div>
+
+<div class="mb-3">
+    <strong>Cierre:</strong>
+    @(Model.FechaCierre?.ToString() ?? "Aún Abierta")
+</div>
+
+<div class="mb-3">
+    <strong>Total Vendido:</strong>
+    RD$ @Model.Ventas.Sum(v => v.Total).ToString("N2")
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Mesa</th>
+            <th>Nombre</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    @foreach(var venta in Model.Ventas)
+    {
+        <tr>
+            <td>@venta.FechaVenta</td>
+            <td>@venta.NumeroMesa</td>
+            <td>@venta.NombreMesa</td>
+            <td>RD$ @venta.Total.ToString("N2")</td>
+        </tr>
+    }
+    </tbody>
+</table>
