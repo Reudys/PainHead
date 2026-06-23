@@ -1,4 +1,4 @@
-@model PainHead.Models.Mesa   // Solo para tener el contexto de la mesa
+@model PainHead.Models.Mesa
 
 @{
     ViewData["Title"] = "Agregar Producto a Mesa";
@@ -6,33 +6,145 @@
     int mesaId = ViewBag.MesaId;
 }
 
-<h2>Agregar Producto a Mesa @ViewBag.MesaNumero</h2>
+<style>
+    .ph-card {
+        max-width: 700px;
+        margin: 30px auto;
+        background: #FFFFFF;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.08);
+    }
 
-<form asp-action="AddProducto" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="mesaId" value="@mesaId" />
+    .ph-title {
+        color: #000000;
+        font-weight: 700;
+        margin-bottom: 25px;
+        text-align: center;
+    }
 
-    <div class="mb-3">
-        <label class="form-label">Producto</label>
-        <select name="productoId" class="form-select" required>
-            <option value="">-- Selecciona un producto --</option>
-            @if (productos != null)
-            {
-                foreach (var p in productos)
+    .ph-title span {
+        color: #FF6B35;
+    }
+
+    .ph-label {
+        font-weight: 600;
+        color: #000000;
+        margin-bottom: 8px;
+    }
+
+    .ph-input {
+        border-radius: 12px;
+        border: 2px solid #e9ecef;
+        padding: 12px;
+    }
+
+    .ph-input:focus {
+        border-color: #34C759;
+        box-shadow: 0 0 0 0.15rem rgba(52,199,89,.25);
+    }
+
+    .btn-add {
+        background: #FF6B35;
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 12px 20px;
+        border-radius: 12px;
+        transition: .2s;
+    }
+
+    .btn-add:hover {
+        background: #e85b2a;
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background: #34C759;
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 12px 20px;
+        border-radius: 12px;
+        transition: .2s;
+    }
+
+    .btn-cancel:hover {
+        background: #2eb04f;
+        transform: translateY(-2px);
+    }
+
+    .ph-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 25px;
+    }
+</style>
+
+<div class="ph-card">
+
+    <h2 class="ph-title">
+        Agregar Producto a <span>Mesa</span>
+    </h2>
+
+    <form asp-action="AddProducto" method="post">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden"
+               name="mesaId"
+               value="@mesaId" />
+
+        <div class="mb-4">
+            <label class="ph-label">
+                Producto
+            </label>
+
+            <select name="productoId"
+                    class="form-select ph-input"
+                    required>
+
+                <option value="">
+                    Selecciona un producto...
+                </option>
+
+                @if (productos != null)
                 {
-                    <option value="@p.Id">@p.Nombre - @p.Precio.ToString("C")</option>
+                    foreach (var p in productos)
+                    {
+                        <option value="@p.Id">
+                            @p.Nombre - @p.Precio.ToString("C")
+                        </option>
+                    }
                 }
-            }
-        </select>
-    </div>
+            </select>
+        </div>
 
-    <div class="mb-3">
-        <label class="form-label">Cantidad</label>
-        <input type="number" name="cantidad" value="1" min="1" class="form-control" required />
-    </div>
+        <div class="mb-4">
+            <label class="ph-label">
+                Cantidad
+            </label>
 
-    <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary">Agregar a la Mesa</button>
-        <a asp-action="Details" asp-route-id="@mesaId" class="btn btn-secondary">Cancelar</a>
-    </div>
-</form>
+            <input type="number"
+                   name="cantidad"
+                   value="1"
+                   min="1"
+                   class="form-control ph-input"
+                   required />
+        </div>
+
+        <div class="ph-actions">
+            <button type="submit" class="btn btn-add">
+                Agregar a la Mesa
+            </button>
+
+            <a asp-action="Details"
+               asp-route-id="@mesaId"
+               class="btn btn-cancel">
+                Cancelar
+            </a>
+        </div>
+
+    </form>
+
+</div>

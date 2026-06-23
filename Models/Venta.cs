@@ -18,4 +18,7 @@ public class Venta
     public string? NombreMesa { get; set; }
 
     public double Total { get; set; }
+
+    public ICollection<ProductoVendido> ProductosVendidos { get; set; }
+        = new List<ProductoVendido>();
 }

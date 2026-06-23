@@ -4,41 +4,123 @@
     ViewData["Title"] = $"Cerrar Mesa #{@Model.NumeroMesa}";
 }
 
-<h2 class="text-danger">Cerrar Mesa @Model.NumeroMesa</h2>
+<style>
+    .ph-title {
+        color: #000;
+        font-weight: 700;
+    }
 
-<div class="alert alert-warning">
-    <h4>⚠️ Atención</h4>
-    <p><strong>¿Estás seguro que quieres cerrar esta mesa?</strong></p>
-    <p>No olvides cobrar al cliente.</p>
+    .ph-warning {
+        background: #fff4ef;
+        border-left: 6px solid #FF6B35;
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .ph-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.10);
+    }
+
+    .ph-total {
+        color: #34C759;
+        font-size: 4rem;
+        font-weight: 800;
+    }
+
+    .table thead {
+        background: #FF6B35;
+        color: white;
+    }
+
+    .btn-success {
+        background: #34C759;
+        border-color: #34C759;
+    }
+
+    .btn-success:hover {
+        background: #28a745;
+    }
+</style>
+
+<h2 class="mb-4 ph-title">
+    🍽️ Mesa @Model.NumeroMesa
+</h2>
+
+<div class="ph-warning mb-4">
+    <h4>
+        🧾 Confirmar Cobro
+    </h4>
+    <p class="mb-0">
+        Verifica que el cliente haya realizado el pago antes de cerrar la mesa.
+        Esta acción registrará la venta en la jornada actual.
+    </p>
 </div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <h4>Total a Cobrar</h4>
-        <h2 class="text-success">@Model.TotalPagar?.ToString("C")</h2>
-        
+<div class="card ph-card mb-4">
+    <div class="card-body p-4">
+        <div class="text-center py-3">
+            <h6 class="text-muted">
+                TOTAL A COBRAR
+            </h6>
+            <div class="ph-total">
+
+                @Model.TotalPagar?.ToString("C")
+
+            </div>
+        </div>
         <hr />
-        
-        <h5>Resumen de productos:</h5>
-        <ul>
-            @foreach (var item in Model.PListas)
-            {
-                <li>@item.Cantidad × @item.Producto?.Nombre - @((item.PrecioUnitario * item.Cantidad).ToString("C"))</li>
-            }
-        </ul>
+        <h4 class="mb-3">
+            Productos consumidos
+        </h4>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>
+                            Producto
+                        </th>
+                        <th>
+                            Cantidad
+                        </th>
+                        <th>
+                            Subtotal
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.PListas)
+                {
+                    <tr>
+                        <td>
+                            @item.Producto?.Nombre
+                        </td>
+                        <td>
+                            @item.Cantidad
+                        </td>
+                        <td>
+                            RD$ @((item.PrecioUnitario * item.Cantidad).ToString("N2"))
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <form asp-action="Close" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" name="id" value="@Model.Id" />
-    
     <div class="d-flex gap-3">
-        <button type="submit" class="btn btn-danger btn-lg">
-            Sí, Cerrar Mesa
+        <button type="submit" class="btn btn-success btn-lg px-4">
+            💰 Cobrar y Cerrar Mesa
         </button>
-        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary btn-lg">
-            Cancelar
+        <a asp-action="Details"
+           asp-route-id="@Model.Id"
+           class="btn btn-outline-warning btn-lg px-4">
+            Volver
         </a>
     </div>
 </form>

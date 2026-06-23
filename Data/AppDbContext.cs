@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<PLista> PListas { get; set; }
     public DbSet<Jornada> Jornadas { get; set; }
     public DbSet<Venta> Ventas { get; set; }
+    public DbSet<ProductoVendido> ProductosVendidos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +44,12 @@ public class AppDbContext : DbContext
             .HasOne(v => v.Jornada)
             .WithMany(j => j.Ventas)
             .HasForeignKey(v => v.JornadaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProductoVendido>()
+            .HasOne(pv => pv.Venta)
+            .WithMany(v => v.ProductosVendidos)
+            .HasForeignKey(pv => pv.VentaId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

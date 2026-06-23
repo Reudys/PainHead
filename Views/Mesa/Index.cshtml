@@ -2,46 +2,144 @@
 
 @{
     ViewData["Title"] = "Lista de Mesas";
-
     DateTime now = DateTime.Now;
     DayOfWeek day = now.DayOfWeek;
 }
 
-<h2>Mesas</h2>
+<style>
+    .ph-title {
+        color:#000;
+        font-weight:700;
+    }
+    .ph-card {
+        border:none;
+        border-radius:20px;
+        box-shadow:0 10px 25px rgba(0,0,0,.10);
+    }
 
-<p>Día: @day</p>
+    .ph-header {
+        background:#fff4ef;
+        border-left:6px solid #FF6B35;
+        border-radius:15px;
+        padding:20px;
+    }
 
-<div>
-    <a asp-action="Create" class="btn btn-primary">Nueva Mesa</a>
+    .ph-day {
+        background:#34C759;
+        color:white;
+        padding:8px 18px;
+        border-radius:20px;
+        font-weight:600;
+    }
+
+    .table thead {
+        background:#FF6B35;
+        color:white;
+    }
+
+    .btn-success {
+        background:#34C759;
+        border-color:#34C759;
+    }
+
+
+    .btn-success:hover {
+        background:#28a745;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="ph-title">
+            🍽️ Mesas
+        </h2>
+        <p class="text-muted mb-0">
+            Control de pedidos activos
+        </p>
+    </div>
+    <div class="ph-day">
+        📅 @day
+    </div>
 </div>
 
-<br />
+<div class="ph-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-1">
+                Jornada activa
+            </h5>
+            <p class="mb-0 text-muted">
+                Las ventas realizadas aquí serán registradas automáticamente.
+            </p>
+        </div>
+        <a asp-action="Create"
+           class="btn btn-success btn-lg">
+            ➕ Nueva Mesa
+        </a>
+    </div>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>N° Mesa</th>
-            <th>Nombre</th>
-            <th>Total a Pagar</th>
-            <th>Productos</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var mesa in Model)
-        {
-            <tr>
-                <td>@mesa.NumeroMesa</td>
-                <td>@mesa.Nombre</td>
-                <td>@(mesa.TotalPagar?.ToString("C") ?? "$0.00")</td>
-                <td>@mesa.PListas.Count</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@mesa.Id" class="btn btn-info btn-sm">Ver</a>
-                    <a asp-action="AddProducto" asp-route-id="@mesa.Id" class="btn btn-success btn-sm">Agregar Producto</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="card ph-card">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>
+                            N° Mesa
+                        </th>
+                        <th>
+                            Nombre
+                        </th>
+                        <th>
+                            Total
+                        </th>
+                        <th>
+                            Productos
+                        </th>
+                        <th>
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var mesa in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">
+                                🍽️ @mesa.NumeroMesa
+                            </td>
+                            <td>
+                                @mesa.Nombre
+                            </td>
+                            <td class="fw-bold text-success">
+                                @(mesa.TotalPagar?.ToString("C") ?? "$0.00")
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    @mesa.PListas.Count productos
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Details" asp-route-id="@mesa.Id" class="btn btn-outline-primary btn-sm">
+                                        Ver
+                                    </a>
+                                    <a asp-action="AddProducto" asp-route-id="@mesa.Id" class="btn btn-success btn-sm">
+                                        ➕ Producto
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-<a href="#">Cerrar Día</a>
+<div class="mt-4">
+    <a asp-action="CerrarJornada" class="btn btn-outline-danger">
+        🔒 Cerrar Día
+    </a>
+</div>

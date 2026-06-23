@@ -4,39 +4,122 @@
     ViewData["Title"] = "Productos";
 }
 
-<h2>Lista de Productos</h2>
+<style>
+    .ph-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.12);
+    }
 
-<div>
-    <a asp-action="Create" class="btn btn-primary">Crear Nuevo Producto</a>
+    .ph-title {
+        font-weight: 800;
+        color: #000;
+    }
+
+    .ph-header {
+        background: #fff4ef;
+        border-left: 6px solid #FF6B35;
+        border-radius: 15px;
+        padding: 18px;
+    }
+
+    .table thead {
+        background: #FF6B35;
+        color: white;
+    }
+
+    .btn-new {
+        background: #34C759;
+        border-color: #34C759;
+        color: white;
+    }
+
+    .btn-new:hover {
+        background: #28a745;
+        color: white;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="ph-title">
+            📦 Productos
+        </h2>
+        <p class="text-muted mb-0">
+            Administración del catálogo
+        </p>
+    </div>
+    <a asp-action="Create" class="btn btn-new btn-lg">
+        ➕ Nuevo Producto
+    </a>
 </div>
 
-<br />
+<div class="ph-header mb-3">
+    <strong>
+        Productos registrados:
+    </strong>
+    @Model.Count
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var producto in Model)
-        {
-            <tr>
-                <td>@producto.Id</td>
-                <td>@producto.Nombre</td>
-                <td style="white-space: normal; word-break: break-word; max-width: 400px;">
-                    @producto.Descripcion
-                </td>
-                <td>@producto.Precio.ToString("C")</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@producto.Id">Editar</a> |
-                    <a asp-action="Delete" asp-route-id="@producto.Id">Eliminar</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="card ph-card">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Nombre
+                        </th>
+                        <th>
+                            Descripción
+                        </th>
+                        <th>
+                            Precio
+                        </th>
+                        <th>
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var producto in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">
+                                #@producto.Id
+                            </td>
+                            <td>
+                                <strong>
+                                    @producto.Nombre
+                                </strong>
+                            </td>
+                            <td style="max-width:350px; white-space:normal;">
+                                @(producto.Descripcion ?? "Sin descripción")
+                            </td>
+                            <td class="text-success fw-bold">
+                                MX$ @producto.Precio.ToString("N2")
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Edit"
+                                       asp-route-id="@producto.Id"
+                                       class="btn btn-outline-primary btn-sm">
+                                        ✏️ Editar
+                                    </a>
+                                    <a asp-action="Delete"
+                                       asp-route-id="@producto.Id"
+                                       class="btn btn-outline-danger btn-sm">
+                                        🗑️ Eliminar
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

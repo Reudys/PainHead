@@ -1,56 +1,164 @@
 @model IEnumerable<Jornada>
 
-<h2>Historial de Jornadas</h2>
+@{
+    ViewData["Title"] = "Historial de Jornadas";
+}
 
-<div class="alert alert-info">
-    <strong>Ganancias Totales del Negocio:</strong>
-    RD$ @($"{ViewBag.GananciasTotales ?? 0:N2}")
+
+<style>
+    .ph-title {
+        color:#000;
+        font-weight:700;
+    }
+
+    .ph-card {
+        border:none;
+        border-radius:20px;
+        box-shadow:0 10px 25px rgba(0,0,0,.10);
+    }
+
+    .ph-money {
+        background:#34C759;
+        color:white;
+        border-radius:20px;
+        padding:25px;
+    }
+
+    .ph-header {
+        background:#fff4ef;
+        border-left:6px solid #FF6B35;
+        border-radius:15px;
+        padding:20px;
+    }
+
+    .table thead {
+        background:#FF6B35;
+        color:white;
+    }
+
+    .badge-open {
+        background:#34C759;
+        padding:8px 14px;
+        border-radius:20px;
+    }
+
+
+    .badge-close {
+        background:#6c757d;
+        padding:8px 14px;
+        border-radius:20px;
+    }
+
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="ph-title">
+            📅 Historial de Jornadas
+        </h2>
+        <p class="text-muted mb-0">
+            Registro de todas las ventas realizadas
+        </p>
+    </div>
 </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Apertura</th>
-            <th>Cierre</th>
-            <th>Ventas</th>
-            <th>Total Vendido</th>
-            <th>Estado</th>
-            <th></th>
-        </tr>
-    </thead>
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="ph-money">
+            <small>
+                GANANCIAS TOTALES
+            </small>
+            <h2 class="mb-0">
+                MX$
+                @($"{ViewBag.GananciasTotales ?? 0:N2}")
+            </h2>
+        </div>
+    </div>
+</div>
 
-    <tbody>
-    @foreach(var jornada in Model)
-    {
-        <tr>
-            <td>@jornada.Id</td>
+<div class="ph-header mb-4">
+    <h5>
+        Resumen de actividad
+    </h5>
+    <p class="mb-0 text-muted">
+        Consulta las jornadas abiertas y cerradas junto con sus ventas.
+    </p>
+</div>
 
-            <td>@jornada.FechaApertura</td>
-
-            <td>
-                @(jornada.FechaCierre?.ToString() ?? "Abierta")
-            </td>
-
-            <td>@jornada.Ventas.Count</td>
-
-            <td>
-                RD$
-                @jornada.Ventas.Sum(v => v.Total).ToString("N2")
-            </td>
-
-            <td>
-                @(jornada.Activa ? "Activa" : "Cerrada")
-            </td>
-
-            <td>
-                <a asp-action="DetalleJornada"
-                   asp-route-id="@jornada.Id"
-                   class="btn btn-primary btn-sm">
-                    Ver Detalle
-                </a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+<div class="card ph-card">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Apertura
+                        </th>
+                        <th>
+                            Cierre
+                        </th>
+                        <th>
+                            Ventas
+                        </th>  
+                        <th>
+                            Total Vendido
+                        </th>
+                        <th>
+                            Estado
+                        </th>
+                        <th>
+                            Acción
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var jornada in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">
+                                #@jornada.Id
+                            </td>
+                            <td>
+                                @jornada.FechaApertura
+                            </td>
+                            <td>
+                                @(jornada.FechaCierre?.ToString() ?? "Abierta")
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    @jornada.Ventas.Count ventas
+                                </span>
+                            </td>
+                            <td class="fw-bold text-success">
+                                MX$
+                                @jornada.Ventas.Sum(v => v.Total).ToString("N2")
+                            </td>
+                            <td>
+                                @if(jornada.Activa)
+                                {
+                                    <span class="badge-open">
+                                        Activa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge-close">
+                                        Cerrada
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                    <a asp-action="DetalleJornada" asp-route-id="@jornada.Id" class="btn btn-outline-primary btn-sm">
+                                        📄 Ver Detalle
+                                    </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
