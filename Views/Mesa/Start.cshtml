@@ -1,28 +1,103 @@
 @model Jornada?
 
-@if (Model != null)
-{
-    <h2>Jornada Activa</h2>
-
-    <p>
-        Apertura: @Model.FechaApertura
-    </p>
-
-    <a asp-action="Index" class="btn btn-success">
-        Entrar al Sistema
-    </a>
-
-    <a asp-action="CerrarJornada"
-       class="btn btn-danger">
-        Cerrar Jornada
-    </a>
+@{
+    ViewData["Title"] = "Inicio";
 }
-else
-{
-    <h2>No existe jornada activa</h2>
 
-    <a asp-action="AbrirJornada"
-       class="btn btn-primary">
-        Abrir Jornada
-    </a>
-}
+<style>
+    .ph-container {
+        min-height:70vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    .ph-card {
+        width:500px;
+        border:none;
+        border-radius:25px;
+        box-shadow:0 15px 35px rgba(0,0,0,.12);
+        padding:40px;
+    }
+
+    .ph-logo {
+        font-size:60px;
+        text-align:center;
+    }
+
+    .ph-title {
+        font-weight:800;
+        color:#000;
+        text-align:center;
+    }
+
+    .ph-green {
+        background:#34C759;
+        border-color:#34C759;
+    }
+
+    .ph-orange {
+        background:#FF6B35;
+        border-color:#FF6B35;
+        color:white;
+    }
+
+    .ph-info {
+        background:#fff4ef;
+        border-left:6px solid #FF6B35;
+        border-radius:15px;
+        padding:15px;
+    }
+</style>
+
+<div class="ph-container">
+    <div class="ph-card">
+        <div class="ph-logo">
+            🍽️
+        </div>
+        <h2 class="ph-title">
+            PainHead
+        </h2>
+        <p class="text-center text-muted mb-4">
+            Sistema de gestión de mesas y ventas
+        </p>
+        @if(Model != null)
+        {
+            <div class="ph-info mb-4">
+                <h5>
+                    🟢 Jornada activa
+                </h5>
+                <p class="mb-0">
+                    Inicio:
+                    <strong>
+                        @Model.FechaApertura.ToString("dd/MM/yyyy hh:mm tt")
+                    </strong>
+                </p>
+            </div>
+            <div class="d-grid gap-3">
+                <a asp-action="Index" class="btn btn-success btn-lg">
+                    Entrar al Sistema
+                </a>
+                <a asp-action="CerrarJornada" class="btn btn-outline-danger btn-lg">
+                    🔒 Cerrar Jornada
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="ph-info mb-4">
+                <h5>
+                    ⚠️ No hay jornada activa
+                </h5>
+                <p class="mb-0">
+                    Debes abrir una jornada antes de comenzar a registrar ventas.
+                </p>
+            </div>
+            <div class="d-grid">
+                <a asp-action="AbrirJornada" class="btn btn-lg ph-orange">
+                    🚀 Abrir Jornada
+                </a>
+            </div>
+        }
+    </div>
+</div>

@@ -4,32 +4,89 @@
     ViewData["Title"] = "Nueva Mesa";
 }
 
-<h2>Crear Nueva Mesa</h2>
+<style>
+    .ph-title {
+        color: #000;
+        font-weight: 700;
+    }
 
-<hr />
+    .ph-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.10);
+    }
 
+    .ph-header {
+        border-left: 6px solid #FF6B35;
+        background: #fff4ef;
+        padding: 18px;
+        border-radius: 15px;
+    }
+
+    .form-control:focus {
+        border-color: #34C759;
+        box-shadow: 0 0 0 .2rem rgba(52,199,89,.25);
+    }
+
+    .btn-success {
+        background: #34C759;
+        border-color: #34C759;
+    }
+
+    .btn-success:hover {
+        background: #28a745;
+    }
+</style>
+
+<h2 class="mb-4 ph-title">
+    🪑 Crear Nueva Mesa
+</h2>
+<div class="ph-header mb-4">
+    <h5>
+        Información de la mesa
+    </h5>
+    <p class="mb-0 text-muted">
+        Registra una nueva mesa para comenzar a tomar pedidos.
+        El número será asignado automáticamente.
+    </p>
+</div>
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
-
-            <div class="mb-3">
-                <label asp-for="Nombre" class="form-label"></label>
-                <input asp-for="Nombre" class="form-control" placeholder="Ej: Mesa VIP, Terraza, etc." />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
+        <div class="card ph-card">
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-4">
+                        <label asp-for="Nombre" 
+                               class="form-label fw-bold">
+                        </label>
+                        <input asp-for="Nombre"
+                               class="form-control"
+                               placeholder="Ej: Mesa VIP, Terraza, Barra..." />
+                        <span asp-validation-for="Nombre"
+                              class="text-danger">
+                        </span>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            Número de Mesa
+                        </label>
+                        <input type="text" class="form-control" value="Asignación automática" disabled />
+                        <small class="text-muted">
+                            El sistema asignará el siguiente número disponible.
+                        </small>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-success btn-lg px-4">
+                            ➕ Crear Mesa
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-warning btn-lg px-4">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Número de Mesa</label>
-                <input type="text" class="form-control" value="(Se asignará automáticamente)" disabled />
-                <small class="text-muted">El número se generará automáticamente</small>
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Crear Mesa</button>
-                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 

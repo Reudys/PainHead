@@ -157,10 +157,8 @@ public class MesaController : Controller
         return View(mesa);
     }
 
-    // POST: Mesa/Close/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    // POST: Mesa/Close/5
     public async Task<IActionResult> Close(int id)
     {
         var mesa = await _context.Mesas
@@ -170,7 +168,6 @@ public class MesaController : Controller
         if (mesa == null)
             return NotFound();
 
-        // Buscar la jornada activa
         var jornada = await _context.Jornadas
             .FirstOrDefaultAsync(j => j.Activa);
 
@@ -180,7 +177,6 @@ public class MesaController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        // Registrar la venta antes de eliminar la mesa
         var venta = new Venta
         {
             JornadaId = jornada.Id,
@@ -192,16 +188,37 @@ public class MesaController : Controller
 
         _context.Ventas.Add(venta);
 
-        // Eliminar los productos asociados a la mesa
-        _context.PListas.RemoveRange(mesa.PListas);
-
-        // Eliminar la mesa
-        _context.Mesas.Remove(mesa);
-
-        // Guardar todos los cambios
         await _context.SaveChangesAsync();
 
-        TempData["Success"] = $"Mesa {mesa.NumeroMesa} cerrada correctamente. Venta registrada por RD$ {venta.Total:N2}.";
+        foreach (var item in mesa.PListas)
+        {
+            var producto = await _context.Productos
+                .FirstOrDefaultAsync(p => p.Id == item.ProductoId);
+
+            if (producto == null)
+                continue;
+
+            var productoVendido = new ProductoVendido
+            {
+                VentaId = venta.Id,
+                ProductoId = producto.Id,
+                NombreProducto = producto.Nombre,
+                Cantidad = item.Cantidad,
+                PrecioUnitario = item.PrecioUnitario,
+                SubTotal = item.Cantidad * item.PrecioUnitario
+            };
+
+            _context.ProductosVendidos.Add(productoVendido);
+        }
+
+        _context.PListas.RemoveRange(mesa.PListas);
+
+        _context.Mesas.Remove(mesa);
+
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] =
+            $"Mesa {mesa.NumeroMesa} cerrada correctamente. Venta registrada por RD$ {venta.Total:N2}.";
 
         return RedirectToAction(nameof(Index));
     }
@@ -279,5 +296,21 @@ public class MesaController : Controller
             .SumAsync(v => (double?)v.Total) ?? 0;
 
         return View(jornada);
+    }
+
+    public async Task<IActionResult> ProductosVendidos()
+    {
+        var productos = await _context.ProductosVendidos
+            .GroupBy(p => p.NombreProducto)
+            .Select(g => new ProductoVendidoResumen
+            {
+                Nombre = g.Key,
+                CantidadVendida = g.Sum(x => x.Cantidad),
+                Ingresos = g.Sum(x => x.SubTotal)
+            })
+            .OrderByDescending(x => x.CantidadVendida)
+            .ToListAsync();
+
+        return View(productos);
     }
 }
