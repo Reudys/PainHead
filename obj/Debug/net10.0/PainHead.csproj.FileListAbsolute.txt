@@ -27,7 +27,6 @@ C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\scopedcss\Views\Shared\_L
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\scopedcss\bundle\PainHead.styles.css
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\scopedcss\projectbundle\PainHead.bundle.scp.css
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\i3uom3rimn-{0}-b9sayid5wm-b9sayid5wm.gz
-C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\n2zch3nrdm-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\pd54qvz6fv-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\7jzo1gmd7c-{0}-bqjiyaj88i-bqjiyaj88i.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\wwnhvirovh-{0}-c2jlpeoesf-c2jlpeoesf.gz
@@ -88,8 +87,6 @@ C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\jk2br67ydk-{0}
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\kiury4myvf-{0}-muycvpuwrr-muycvpuwrr.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\qpo8mvfine-{0}-87fc7y1x7t-87fc7y1x7t.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\zeekyprbby-{0}-mlv21k5csn-mlv21k5csn.gz
-C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\mvheci625t-{0}-20c2ouj5ym-20c2ouj5ym.gz
-C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\1gevm676fy-{0}-20c2ouj5ym-20c2ouj5ym.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\staticwebassets.development.json
@@ -101,3 +98,5 @@ C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\refint\PainHead.dll
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\PainHead.pdb
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\PainHead.genruntimeconfig.cache
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\ref\PainHead.dll
+C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\mvheci625t-{0}-bcvvdmj43c-bcvvdmj43c.gz
+C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\1gevm676fy-{0}-bcvvdmj43c-bcvvdmj43c.gz
