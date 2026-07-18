@@ -1,0 +1,195 @@
+@model IEnumerable<PainHead.Models.Gasto>
+
+@{
+    ViewData["Title"] = "Finanzas";
+
+    double ingresos = ViewBag.Ingresos;
+    double gastos = ViewBag.Gastos;
+    double ganancia = ingresos - gastos;
+}
+
+<h2 class="mb-4 fw-bold">Balance Financiero</h2>
+
+<div class="row mb-4">
+
+    <div class="col-md-4">
+        <div class="card shadow border-0 text-center">
+            <div class="card-body">
+                <h6>Ingresos</h6>
+                <h2 class="text-success">
+                    RD$ @ingresos.ToString("N2")
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0 text-center">
+            <div class="card-body">
+                <h6>Gastos</h6>
+                <h2 class="text-danger">
+                    RD$ @gastos.ToString("N2")
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-0 text-center">
+            <div class="card-body">
+                <h6>Ganancia Neta</h6>
+                <h2 style="color:#34c759">
+                    RD$ @ganancia.ToString("N2")
+                </h2>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card shadow border-0 mb-4">
+
+    <div class="card-header bg-dark text-white">
+        Registrar Gasto
+    </div>
+
+    <div class="card-body">
+
+        <form asp-action="Crear" method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+
+                <div class="col-md-5">
+                    <input
+                        name="Concepto"
+                        class="form-control"
+                        placeholder="Concepto del gasto"
+                        required />
+                </div>
+
+                <div class="col-md-3">
+                    <input
+                        type="number"
+                        name="Monto"
+                        step="0.01"
+                        class="form-control"
+                        placeholder="Monto"
+                        required />
+                </div>
+
+                <div class="col-md-2">
+                    <input
+                        type="date"
+                        name="Fecha"
+                        class="form-control"
+                        value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-success w-100">
+                        Guardar
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="card shadow border-0 mb-4">
+
+    <div class="card-header bg-dark text-white">
+        Filtrar por Fechas
+    </div>
+
+    <div class="card-body">
+
+        <form method="get">
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <label>Desde</label>
+                    <input
+                        type="date"
+                        name="desde"
+                        value="@ViewBag.Desde?.ToString("yyyy-MM-dd")"
+                        class="form-control" />
+                </div>
+
+                <div class="col-md-4">
+                    <label>Hasta</label>
+                    <input
+                        type="date"
+                        name="hasta"
+                        value="@ViewBag.Hasta?.ToString("yyyy-MM-dd")"
+                        class="form-control" />
+                </div>
+
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">
+                        Filtrar
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="card shadow border-0">
+
+    <div class="card-header bg-dark text-white">
+        Historial de Gastos
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+                    <th>Fecha</th>
+                    <th>Concepto</th>
+                    <th>Monto</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach (var gasto in Model)
+                {
+                    <tr>
+
+                        <td>
+                            @gasto.Fecha.ToString("dd/MM/yyyy")
+                        </td>
+
+                        <td>
+                            @gasto.Concepto
+                        </td>
+
+                        <td class="text-danger fw-bold">
+                            RD$ @gasto.Monto.ToString("N2")
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
