@@ -17,7 +17,7 @@
             <div class="card-body">
                 <h6>Ingresos</h6>
                 <h2 class="text-success">
-                    RD$ @ingresos.ToString("N2")
+                    MX$ @ingresos.ToString("N2")
                 </h2>
             </div>
         </div>
@@ -28,7 +28,7 @@
             <div class="card-body">
                 <h6>Gastos</h6>
                 <h2 class="text-danger">
-                    RD$ @gastos.ToString("N2")
+                    MX$ @gastos.ToString("N2")
                 </h2>
             </div>
         </div>
@@ -39,7 +39,7 @@
             <div class="card-body">
                 <h6>Ganancia Neta</h6>
                 <h2 style="color:#34c759">
-                    RD$ @ganancia.ToString("N2")
+                    MX$ @ganancia.ToString("N2")
                 </h2>
             </div>
         </div>
@@ -49,7 +49,7 @@
 
 <div class="card shadow border-0 mb-4">
 
-    <div class="card-header bg-dark text-white">
+    <div class="card-header bg-orange text-white">
         Registrar Gasto
     </div>
 
@@ -103,7 +103,7 @@
 
 <div class="card shadow border-0 mb-4">
 
-    <div class="card-header bg-dark text-white">
+    <div class="card-header bg-orange text-white">
         Filtrar por Fechas
     </div>
 
@@ -132,7 +132,7 @@
                 </div>
 
                 <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn btn-primary w-100">
+                    <button class="btn btn-success w-100">
                         Filtrar
                     </button>
                 </div>
@@ -147,7 +147,7 @@
 
 <div class="card shadow border-0">
 
-    <div class="card-header bg-dark text-white">
+    <div class="card-header bg-orange text-white">
         Historial de Gastos
     </div>
 
@@ -180,7 +180,7 @@
                         </td>
 
                         <td class="text-danger fw-bold">
-                            RD$ @gasto.Monto.ToString("N2")
+                            MX$ @gasto.Monto.ToString("N2")
                         </td>
 
                     </tr>
