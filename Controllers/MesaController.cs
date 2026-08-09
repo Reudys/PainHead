@@ -270,23 +270,35 @@ public class MesaController : Controller
         return RedirectToAction(nameof(Start));
     }
 
-    public async Task<IActionResult> Jornada()
+    public async Task<IActionResult> Jornada(DateTime? desde, DateTime? hasta)
     {
-        var jornadas = await _context.Jornadas
+        var jornadas = _context.Jornadas
             .Include(j => j.Ventas)
             .OrderByDescending(j => j.FechaApertura)
-            .ToListAsync();
+            .AsQueryable();
 
-        ViewBag.GananciasTotales = await _context.Ventas
-            .SumAsync(v => (double?)v.Total) ?? 0;
+        if (desde.HasValue)
+            jornadas = jornadas.Where(j => j.FechaApertura.Date >= desde.Value.Date);
 
-        return View(jornadas);
+        if (hasta.HasValue)
+            jornadas = jornadas.Where(j => j.FechaApertura.Date <= hasta.Value.Date);
+
+        var lista = await jornadas.ToListAsync();
+
+        ViewBag.GananciasTotales = lista
+            .Sum(j => j.Ventas.Sum(v => v.Total));
+
+        ViewBag.Desde = desde;
+        ViewBag.Hasta = hasta;
+
+        return View(lista);
     }
 
     public async Task<IActionResult> DetalleJornada(int id)
     {
         var jornada = await _context.Jornadas
             .Include(j => j.Ventas)
+                .ThenInclude(v => v.ProductosVendidos)
             .FirstOrDefaultAsync(j => j.Id == id);
 
         if (jornada == null)
