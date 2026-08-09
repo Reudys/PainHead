@@ -26,7 +26,6 @@ C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\rjsmcshtml.dswa.cache.jso
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\scopedcss\bundle\PainHead.styles.css
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\scopedcss\projectbundle\PainHead.bundle.scp.css
-C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\i3uom3rimn-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\pd54qvz6fv-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\7jzo1gmd7c-{0}-bqjiyaj88i-bqjiyaj88i.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\wwnhvirovh-{0}-c2jlpeoesf-c2jlpeoesf.gz
@@ -100,3 +99,4 @@ C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\PainHead.genruntimeconfig
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\ref\PainHead.dll
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\mvheci625t-{0}-bcvvdmj43c-bcvvdmj43c.gz
 C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\1gevm676fy-{0}-bcvvdmj43c-bcvvdmj43c.gz
+C:\Users\reudy\source\repos\PainHead\obj\Debug\net10.0\compressed\i3uom3rimn-{0}-u00cj089w8-u00cj089w8.gz
