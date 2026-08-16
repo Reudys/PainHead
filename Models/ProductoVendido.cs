@@ -14,6 +14,8 @@ public class ProductoVendido
 
     public string NombreProducto { get; set; } = string.Empty;
 
+    public string NombreCliente { get; set; } = string.Empty;
+
     public int Cantidad { get; set; }
 
     public double PrecioUnitario { get; set; }

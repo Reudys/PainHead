@@ -6,9 +6,14 @@ public class Mesa
 {
     [Key]
     public int Id { get; set; }
+
     public int NumeroMesa { get; set; }
-    public string? Nombre { get; set; }
+
+    public string Nombre { get; set; } = string.Empty;
+
     public double? TotalPagar { get; set; }
 
     public ICollection<PLista> PListas { get; set; } = new List<PLista>();
+
+    public ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
 }
