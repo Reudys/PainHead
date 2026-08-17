@@ -379,6 +379,11 @@ public class MesaController : Controller
 
         ViewBag.Desde = desde;
         ViewBag.Hasta = hasta;
+        ViewBag.GananciasTotales = lista
+            .Sum(j => j.Ventas.Sum(v => v.Total));
+
+        ViewBag.Desde = desde;
+        ViewBag.Hasta = hasta;
 
         return View(lista);
     }
