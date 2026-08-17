@@ -1,9 +1,8 @@
 @model PainHead.Models.Mesa
 
 @{
-    ViewData["Title"] = $"Mesa #{@Model.NumeroMesa}";
+    ViewData["Title"] = $"Mesa #{Model.NumeroMesa}";
 }
-
 
 <style>
     .ph-title {
@@ -11,154 +10,253 @@
         font-weight: 700;
     }
 
-
     .ph-card {
         border: none;
         border-radius: 20px;
         box-shadow: 0 10px 25px rgba(0,0,0,.10);
     }
 
-
-    .ph-total {
+    .ph-green {
         background: #34C759;
         color: white;
         border-radius: 18px;
+        padding: 20px 25px;
+    }
+
+    .ph-orange {
+        background: #fff4ef;
+        border-left: 6px solid #FF6B35;
+        border-radius: 15px;
         padding: 20px;
     }
 
-
-    .ph-header {
-        background: #fff4ef;
-        border-left: 6px solid #FF6B35;
-        padding: 18px;
+    .ph-client {
+        border-left: 5px solid #34C759;
         border-radius: 15px;
+        background: #f8f9fa;
     }
-
 
     .table thead {
         background: #FF6B35;
         color: white;
     }
-
-
-    .btn-success {
-        background:#34C759;
-        border-color:#34C759;
-    }
-
-
-    .btn-success:hover {
-        background:#28a745;
-    }
-
-
-    .btn-danger {
-        background:#dc3545;
-    }
 </style>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="ph-title">
-            🍽️ Mesa @Model.NumeroMesa
+            🪑 Mesa @Model.NumeroMesa
         </h2>
+
         <p class="text-muted mb-0">
             @Model.Nombre
         </p>
     </div>
-    <div class="ph-total text-center">
+
+    <div class="ph-green text-center">
         <small>
-            TOTAL
+            TOTAL DE LA MESA
         </small>
-        <h3 class="mb-0">
-            @Model.TotalPagar?.ToString("C")
-        </h3>
+
+        <h2 class="mb-0">
+            RD$ @((Model.Pedidos
+                .SelectMany(p => p.PListas)
+                .Sum(p => p.PrecioUnitario * p.Cantidad))
+                .ToString("N2"))
+        </h2>
     </div>
 </div>
-<div class="ph-header mb-4">
-    <h5>
-        Gestión de pedido
-    </h5>
-    <p class="mb-0 text-muted">
-        Agrega productos, revisa el pedido y cierra la mesa cuando el cliente haya pagado.
-    </p>
-</div>
-<div class="mb-4 d-flex gap-2 flex-wrap">
-    <a asp-action="AddProducto" asp-route-id="@Model.Id" class="btn btn-success btn-lg">
-        ➕ Agregar Producto
-    </a>
-    <a asp-action="Index" class="btn btn-outline-warning btn-lg">
+
+<div class="d-flex gap-2 mb-4">
+    <a asp-action="Index"
+       class="btn btn-outline-secondary">
         ← Volver a Mesas
     </a>
-    <a asp-action="ConfirmClose" asp-route-id="@Model.Id" class="btn btn-danger btn-lg">
-        💰 Cerrar Mesa
+
+    <a asp-action="ConfirmClose"
+       asp-route-id="@Model.Id"
+       class="btn btn-danger">
+        🔒 Cerrar Mesa
     </a>
 </div>
-<div class="card ph-card">
+
+<div class="card ph-card mb-4">
     <div class="card-body p-4">
-        <h4 class="mb-4">
-            Productos en esta mesa
+
+        <h4 class="mb-3">
+            👥 Agregar Cliente
         </h4>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>
-                            Producto
-                        </th>
-                        <th>
-                            Descripción
-                        </th>
-                        <th>
-                            Precio
-                        </th>
-                        <th>
-                            Cantidad
-                        </th>
-                        <th>
-                            Subtotal
-                        </th>
-                        <th>
-                            Acción
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var item in Model.PListas)
-                {
-                    <tr>
-                        <td class="fw-bold">
-                            @item.Producto?.Nombre
-                        </td>
-                        <td>
-                            @item.Producto?.Descripcion
-                        </td>
-                        <td>
-                            MX$ @item.PrecioUnitario.ToString("N2")
-                        </td>
-                        <td>
-                            <span class="badge bg-success">
-                                @item.Cantidad
-                            </span>
-                        </td>
 
-                        <td class="fw-bold">
-                            MX$
-                            @((item.PrecioUnitario * item.Cantidad).ToString("N2"))
-                        </td>
-                        <td>
-                            <form asp-action="RemoveProducto" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar este producto?')">
+        <p class="text-muted">
+            Crea un pedido para cada persona que esté consumiendo
+            en esta mesa.
+        </p>
 
-                                    🗑️ Eliminar
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
+        <form asp-action="CrearPedido"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="mesaId"
+                   value="@Model.Id" />
+
+            <div class="row">
+
+                <div class="col-md-9">
+                    <input type="text"
+                           name="nombreCliente"
+                           class="form-control"
+                           placeholder="Nombre del cliente"
+                           maxlength="100"
+                           required />
+                </div>
+
+                <div class="col-md-3">
+                    <button type="submit"
+                            class="btn btn-success w-100">
+                        + Crear Pedido
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
     </div>
 </div>
+
+@if (Model.Pedidos.Any())
+{
+    <h4 class="ph-title mb-3">
+        🧾 Pedidos de la Mesa
+    </h4>
+
+    @foreach (var pedido in Model.Pedidos)
+    {
+        var totalPedido = pedido.PListas
+            .Sum(p => p.PrecioUnitario * p.Cantidad);
+
+        <div class="card ph-card mb-4">
+
+            <div class="card-header bg-orange text-white">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <strong>
+                        👤 @pedido.NombreCliente
+                    </strong>
+
+                    <strong>
+                        RD$ @totalPedido.ToString("N2")
+                    </strong>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                @if (pedido.PListas.Any())
+                {
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                    <th>Especificación</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var item in pedido.PListas)
+                                {
+                                    <tr>
+
+                                        <td class="fw-semibold">
+                                            @item.Producto?.Nombre
+                                        </td>
+
+                                        <td>
+                                            RD$ @item.PrecioUnitario.ToString("N2")
+                                        </td>
+
+                                        <td>
+                                            @item.Cantidad
+                                        </td>
+
+                                        <td class="fw-bold text-success">
+                                            RD$ @((item.PrecioUnitario * item.Cantidad).ToString("N2"))
+                                        </td>
+
+                                        <td>
+                                            @item.Especificacion
+                                        </td>
+
+                                        <td>
+
+                                            <form asp-action="RemoveProducto"
+                                                method="post">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                    name="id"
+                                                    value="@item.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm"
+                                                        onclick="return confirm('¿Eliminar este producto del pedido?')">
+                                                    Eliminar
+                                                </button>
+
+                                            </form>
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        Este cliente todavía no tiene productos.
+                    </div>
+                }
+
+                <a asp-action="AddProducto"
+                asp-route-pedidoId="@pedido.Id"
+                class="btn btn-success">
+                    + Agregar Producto
+                </a>
+
+            </div>
+
+        </div>
+    }
+}
+else
+{
+    <div class="ph-orange">
+        <h5>
+            👥 No hay pedidos registrados
+        </h5>
+
+        <p class="mb-0 text-muted">
+            Agrega un cliente para comenzar a registrar su pedido.
+        </p>
+    </div>
+}

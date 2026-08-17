@@ -17,6 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<Venta> Ventas { get; set; }
     public DbSet<ProductoVendido> ProductosVendidos { get; set; }
     public DbSet<Gasto> Gastos { get; set; }
+    public DbSet<Pedido> Pedidos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

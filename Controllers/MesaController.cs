@@ -22,7 +22,6 @@ public class MesaController : Controller
         return View(jornadaActiva);
     }
 
-    // GET: Mesa
     public async Task<IActionResult> Index()
     {
         var jornadaActiva = await _context.Jornadas
@@ -32,42 +31,45 @@ public class MesaController : Controller
             return RedirectToAction(nameof(Start));
 
         var mesas = await _context.Mesas
+            .Include(m => m.Pedidos)
+                .ThenInclude(p => p.PListas)
             .Include(m => m.PListas)
-            .ThenInclude(pl => pl.Producto)
+                .ThenInclude(pl => pl.Producto)
             .ToListAsync();
 
         return View(mesas);
     }
 
-    // GET: Mesa/Details/5
     public async Task<IActionResult> Details(int? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+            return NotFound();
 
         var mesa = await _context.Mesas
+            .Include(m => m.Pedidos)
+                .ThenInclude(p => p.PListas)
+                    .ThenInclude(pl => pl.Producto)
             .Include(m => m.PListas)
                 .ThenInclude(pl => pl.Producto)
             .FirstOrDefaultAsync(m => m.Id == id);
 
-        if (mesa == null) return NotFound();
+        if (mesa == null)
+            return NotFound();
 
         return View(mesa);
     }
 
-    // GET: Mesa/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: Mesa/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Nombre")] Mesa mesa)
     {
         if (ModelState.IsValid)
         {
-            // Lógica para NumeroMesa auto-incrementado
             var ultimoNumero = await _context.Mesas
                 .OrderByDescending(m => m.NumeroMesa)
                 .Select(m => m.NumeroMesa)
@@ -75,84 +77,149 @@ public class MesaController : Controller
 
             mesa.NumeroMesa = ultimoNumero + 1;
 
-            _context.Add(mesa);
+            _context.Mesas.Add(mesa);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
+
         return View(mesa);
-    }
-
-    // GET: Mesa/AddProducto/5   → Agregar producto a una mesa
-    public async Task<IActionResult> AddProducto(int? id)
-    {
-        if (id == null) return NotFound();
-
-        var mesa = await _context.Mesas.FindAsync(id);
-        if (mesa == null) return NotFound();
-
-        ViewBag.Productos = await _context.Productos.ToListAsync();
-        ViewBag.MesaId = id;
-
-        return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddProducto(int mesaId, int productoId, int cantidad = 1)
+    public async Task<IActionResult> CrearPedido(int mesaId, string nombreCliente)
     {
-        var mesa = await _context.Mesas.FindAsync(mesaId);
-        var producto = await _context.Productos.FindAsync(productoId);
+        if (string.IsNullOrWhiteSpace(nombreCliente))
+        {
+            TempData["Error"] = "Debes indicar el nombre del cliente.";
 
-        if (mesa == null || producto == null)
+            return RedirectToAction(nameof(Details), new { id = mesaId });
+        }
+
+        var mesa = await _context.Mesas.FindAsync(mesaId);
+
+        if (mesa == null)
+            return NotFound();
+
+        var pedido = new Pedido
+        {
+            MesaId = mesaId,
+            NombreCliente = nombreCliente.Trim()
+        };
+
+        _context.Pedidos.Add(pedido);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] =
+            $"Pedido de {pedido.NombreCliente} creado correctamente.";
+
+        return RedirectToAction(nameof(Details), new { id = mesaId });
+    }
+
+    public async Task<IActionResult> AddProducto(int? pedidoId)
+    {
+        if (pedidoId == null)
+            return NotFound();
+
+        var pedido = await _context.Pedidos
+            .Include(p => p.Mesa)
+            .FirstOrDefaultAsync(p => p.Id == pedidoId);
+
+        if (pedido == null)
+            return NotFound();
+
+        var productos = await _context.Productos
+            .OrderBy(p => p.Nombre)
+            .ToListAsync();
+
+        ViewBag.Productos = productos;
+
+        return View(pedido);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddProducto(
+        int pedidoId,
+        int productoId,
+        int cantidad = 1,
+        string? especificacion = null)
+    {
+        if (cantidad < 1)
+            cantidad = 1;
+
+        var pedido = await _context.Pedidos
+            .Include(p => p.Mesa)
+            .FirstOrDefaultAsync(p => p.Id == pedidoId);
+
+        if (pedido == null)
+            return NotFound();
+
+        var producto = await _context.Productos
+            .FindAsync(productoId);
+
+        if (producto == null)
             return NotFound();
 
         var pLista = new PLista
         {
-            MesaId = mesaId,
-            ProductoId = productoId,
+            MesaId = pedido.MesaId,
+            PedidoId = pedido.Id,
+            ProductoId = producto.Id,
             Cantidad = cantidad,
-            PrecioUnitario = producto.Precio
+            PrecioUnitario = producto.Precio,
+            Especificacion = string.IsNullOrWhiteSpace(especificacion)
+                ? null
+                : especificacion.Trim()
         };
 
         _context.PListas.Add(pLista);
+
         await _context.SaveChangesAsync();
 
-        await ActualizarTotalMesa(mesaId);   // ← Actualiza el total
+        await ActualizarTotalMesa(pedido.MesaId);
 
-        return RedirectToAction(nameof(Details), new { id = mesaId });
+        return RedirectToAction(
+            nameof(Details),
+            new { id = pedido.MesaId });
     }
 
-    // POST: Mesa/RemoveProducto/5
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveProducto(int id)
     {
-        var pLista = await _context.PListas.FindAsync(id);
+        var pLista = await _context.PListas
+            .FirstOrDefaultAsync(p => p.Id == id);
+
         if (pLista == null)
             return NotFound();
 
-        int mesaId = pLista.MesaId;
+        var mesaId = pLista.MesaId;
 
         _context.PListas.Remove(pLista);
         await _context.SaveChangesAsync();
 
-        await ActualizarTotalMesa(mesaId);   // ← Actualiza el total
+        await ActualizarTotalMesa(mesaId);
 
-        return RedirectToAction(nameof(Details), new { id = mesaId });
+        return RedirectToAction(
+            nameof(Details),
+            new { id = mesaId });
     }
 
-    // GET: Mesa/ConfirmClose/5
     public async Task<IActionResult> ConfirmClose(int? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+            return NotFound();
 
         var mesa = await _context.Mesas
-            .Include(m => m.PListas)
-                .ThenInclude(pl => pl.Producto)
+            .Include(m => m.Pedidos)
+                .ThenInclude(p => p.PListas)
+                    .ThenInclude(pl => pl.Producto)
             .FirstOrDefaultAsync(m => m.Id == id);
 
-        if (mesa == null) return NotFound();
+        if (mesa == null)
+            return NotFound();
 
         return View(mesa);
     }
@@ -162,7 +229,8 @@ public class MesaController : Controller
     public async Task<IActionResult> Close(int id)
     {
         var mesa = await _context.Mesas
-            .Include(m => m.PListas)
+            .Include(m => m.Pedidos)
+                .ThenInclude(p => p.PListas)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (mesa == null)
@@ -174,8 +242,13 @@ public class MesaController : Controller
         if (jornada == null)
         {
             TempData["Error"] = "No existe una jornada activa.";
+
             return RedirectToAction(nameof(Index));
         }
+
+        var totalMesa = mesa.Pedidos
+            .SelectMany(p => p.PListas)
+            .Sum(p => p.PrecioUnitario * p.Cantidad);
 
         var venta = new Venta
         {
@@ -183,63 +256,72 @@ public class MesaController : Controller
             FechaVenta = DateTime.Now,
             NumeroMesa = mesa.NumeroMesa,
             NombreMesa = mesa.Nombre,
-            Total = mesa.TotalPagar ?? 0
+            Total = totalMesa
         };
 
         _context.Ventas.Add(venta);
-
         await _context.SaveChangesAsync();
 
-        foreach (var item in mesa.PListas)
+        foreach (var pedido in mesa.Pedidos)
         {
-            var producto = await _context.Productos
-                .FirstOrDefaultAsync(p => p.Id == item.ProductoId);
-
-            if (producto == null)
-                continue;
-
-            var productoVendido = new ProductoVendido
+            foreach (var item in pedido.PListas)
             {
-                VentaId = venta.Id,
-                ProductoId = producto.Id,
-                NombreProducto = producto.Nombre,
-                Cantidad = item.Cantidad,
-                PrecioUnitario = item.PrecioUnitario,
-                SubTotal = item.Cantidad * item.PrecioUnitario
-            };
+                var producto = await _context.Productos
+                    .FirstOrDefaultAsync(p => p.Id == item.ProductoId);
 
-            _context.ProductosVendidos.Add(productoVendido);
+                if (producto == null)
+                    continue;
+
+                var productoVendido = new ProductoVendido
+                {
+                    VentaId = venta.Id,
+                    ProductoId = producto.Id,
+                    NombreProducto = producto.Nombre,
+                    NombreCliente = pedido.NombreCliente,
+                    Cantidad = item.Cantidad,
+                    PrecioUnitario = item.PrecioUnitario,
+                    SubTotal = item.Cantidad * item.PrecioUnitario
+                };
+
+                _context.ProductosVendidos.Add(productoVendido);
+            }
         }
 
-        _context.PListas.RemoveRange(mesa.PListas);
+        _context.PListas.RemoveRange(
+            mesa.Pedidos.SelectMany(p => p.PListas));
 
+        _context.Pedidos.RemoveRange(mesa.Pedidos);
         _context.Mesas.Remove(mesa);
 
         await _context.SaveChangesAsync();
 
         TempData["Success"] =
-            $"Mesa {mesa.NumeroMesa} cerrada correctamente. Venta registrada por RD$ {venta.Total:N2}.";
+            $"Mesa {mesa.NumeroMesa} cerrada correctamente. " +
+            $"Venta registrada por RD$ {venta.Total:N2}.";
 
         return RedirectToAction(nameof(Index));
     }
 
-    // Método auxiliar para recalcular el total
     private async Task ActualizarTotalMesa(int mesaId)
     {
         var mesa = await _context.Mesas
-            .Include(m => m.PListas)
+            .Include(m => m.Pedidos)
+                .ThenInclude(p => p.PListas)
             .FirstOrDefaultAsync(m => m.Id == mesaId);
 
-        if (mesa == null) return;
+        if (mesa == null)
+            return;
 
-        mesa.TotalPagar = mesa.PListas.Sum(pl => pl.PrecioUnitario * pl.Cantidad);
+        mesa.TotalPagar = mesa.Pedidos
+            .SelectMany(p => p.PListas)
+            .Sum(p => p.PrecioUnitario * p.Cantidad);
 
         await _context.SaveChangesAsync();
     }
 
     public async Task<IActionResult> AbrirJornada()
     {
-        bool existe = await _context.Jornadas
+        var existe = await _context.Jornadas
             .AnyAsync(j => j.Activa);
 
         if (!existe)
@@ -247,7 +329,6 @@ public class MesaController : Controller
             var jornada = new Jornada();
 
             _context.Jornadas.Add(jornada);
-
             await _context.SaveChangesAsync();
         }
 
@@ -270,7 +351,9 @@ public class MesaController : Controller
         return RedirectToAction(nameof(Start));
     }
 
-    public async Task<IActionResult> Jornada(DateTime? desde, DateTime? hasta)
+    public async Task<IActionResult> Jornada(
+        DateTime? desde,
+        DateTime? hasta)
     {
         var jornadas = _context.Jornadas
             .Include(j => j.Ventas)
@@ -278,13 +361,24 @@ public class MesaController : Controller
             .AsQueryable();
 
         if (desde.HasValue)
-            jornadas = jornadas.Where(j => j.FechaApertura.Date >= desde.Value.Date);
+        {
+            jornadas = jornadas.Where(j =>
+                j.FechaApertura.Date >= desde.Value.Date);
+        }
 
         if (hasta.HasValue)
-            jornadas = jornadas.Where(j => j.FechaApertura.Date <= hasta.Value.Date);
+        {
+            jornadas = jornadas.Where(j =>
+                j.FechaApertura.Date <= hasta.Value.Date);
+        }
 
         var lista = await jornadas.ToListAsync();
 
+        ViewBag.GananciasTotales = lista
+            .Sum(j => j.Ventas.Sum(v => v.Total));
+
+        ViewBag.Desde = desde;
+        ViewBag.Hasta = hasta;
         ViewBag.GananciasTotales = lista
             .Sum(j => j.Ventas.Sum(v => v.Total));
 
@@ -304,8 +398,9 @@ public class MesaController : Controller
         if (jornada == null)
             return NotFound();
 
-        ViewBag.GananciasTotales = await _context.Ventas
-            .SumAsync(v => (double?)v.Total) ?? 0;
+        ViewBag.GananciasTotales =
+            await _context.Ventas
+                .SumAsync(v => (double?)v.Total) ?? 0;
 
         return View(jornada);
     }

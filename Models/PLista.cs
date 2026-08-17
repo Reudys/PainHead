@@ -5,16 +5,21 @@ namespace PainHead.Models;
 public class PLista
 {
     [Key]
-    public int Id { get; set; }                    // Clave primaria de la relación
+    public int Id { get; set; }
 
-    public int MesaId { get; set; }                // Clave foránea hacia Mesa
-    public int ProductoId { get; set; }            // Clave foránea hacia Producto
-
-    // Propiedades de navegación (muy importantes)
+    public int MesaId { get; set; }
     public Mesa? Mesa { get; set; }
+
+    public int PedidoId { get; set; }
+    public Pedido? Pedido { get; set; }
+
+    public int ProductoId { get; set; }
     public Producto? Producto { get; set; }
 
-    // Datos adicionales útiles (recomendado)
     public int Cantidad { get; set; } = 1;
-    public double PrecioUnitario { get; set; }    // Para guardar el precio al momento de agregar
+
+    public double PrecioUnitario { get; set; }
+
+    [MaxLength(250)]
+    public string? Especificacion { get; set; }
 }
