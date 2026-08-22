@@ -59,7 +59,7 @@
         </small>
 
         <h2 class="mb-0">
-            RD$ @((Model.Pedidos
+            MX$ @((Model.Pedidos
                 .SelectMany(p => p.PListas)
                 .Sum(p => p.PrecioUnitario * p.Cantidad))
                 .ToString("N2"))
@@ -148,7 +148,7 @@
                     </strong>
 
                     <strong>
-                        RD$ @totalPedido.ToString("N2")
+                        MX$ @totalPedido.ToString("N2")
                     </strong>
 
                 </div>
@@ -185,7 +185,7 @@
                                         </td>
 
                                         <td>
-                                            RD$ @item.PrecioUnitario.ToString("N2")
+                                            MX$ @item.PrecioUnitario.ToString("N2")
                                         </td>
 
                                         <td>
@@ -193,7 +193,7 @@
                                         </td>
 
                                         <td class="fw-bold text-success">
-                                            RD$ @((item.PrecioUnitario * item.Cantidad).ToString("N2"))
+                                            MX$ @((item.PrecioUnitario * item.Cantidad).ToString("N2"))
                                         </td>
 
                                         <td>
