@@ -1,3 +1,11 @@
+# Build
 bin/
 obj/
+
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# Visual Studio
 .vs/
